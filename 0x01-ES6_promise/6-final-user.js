@@ -1,22 +1,17 @@
+/* eslint-disable */
 import signUpUser from './4-user-promise';
 import uploadPhoto from './5-photo-reject';
 
-export default async function handleProfileSignup(
-  firstName,
-  lastName,
-  fileName,
-) {
-  const results = await Promise.allSettled([
+export default function handleProfileSignup(firstName, lastName, fileName) {
+  return Promise.allSettled([
     signUpUser(firstName, lastName),
     uploadPhoto(fileName),
-  ]);
-
-  const values = results.map((result) => {
-    if (result.status === 'fulfilled') {
-      return result;
+  ]).then((values) => {
+    const arr = [];
+    for (const item of values) {
+      arr.push({ status: item.status, value: item.value || item.reason });
     }
-    return { status: result.status, value: `${result.reason}` };
+    return arr;
   });
-
-  return values;
 }
+Footer
